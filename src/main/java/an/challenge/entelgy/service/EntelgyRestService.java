@@ -8,27 +8,41 @@ import org.springframework.web.client.RestTemplate;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Service
 public class EntelgyRestService {
 
-    public Map<String, List<Data>> restructure() {
+    public Map<String, List<String>> restructure(ResponseAPI result) {
+
+        List<String> response = new ArrayList<>();
+        StringBuilder dataUser = new StringBuilder("");
+        for (Data data : result.getData()) {
+            dataUser.append(data.getId());
+            dataUser.append("|");
+            dataUser.append(data.getLast_name());
+            dataUser.append("|");
+            dataUser.append(data.getEmail());
+            response.add(dataUser.toString());
+            dataUser = new StringBuilder("");
+        }
+
+        HashMap<String, List<String>> data = new HashMap<>();
+        data.put("data", response);
+        return data;
+
+    }
+
+    public ResponseAPI callAPI() {
         try {
             String uri = getUrl();
             RestTemplate restTemplate = new RestTemplate();
-            ResponseAPI result = restTemplate.getForObject(uri, ResponseAPI.class);
-
-            HashMap<String, List<Data>> data = new HashMap<>();
-            data.put("data", result.getData());
-            return data;
+            return restTemplate.getForObject(uri, ResponseAPI.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+
     }
 
     private String getUrl() {
@@ -51,3 +65,5 @@ public class EntelgyRestService {
         return properties.getProperty("url");
     }
 }
+
+

@@ -14,8 +14,8 @@ public class EntelgyRestController {
     EntelgyRestService entelgyRestService;
 
     @PostMapping("/")
-    public Map<String, List<Data>> restructure() {
-        return entelgyRestService.restructure();
+    public Map<String, List<String>> restructure() {
+        return entelgyRestService.restructure(entelgyRestService.callAPI());
     }
 
 }
